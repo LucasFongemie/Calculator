@@ -1,0 +1,143 @@
+package TSJPpackage;
+import java.util.Scanner;
+
+public class TSJPclass {
+	
+	static String sString;
+	static double firstSide;
+	static String eString;
+	static double either;
+	static double a;
+	static double b;
+	static double c;
+	static double A;
+	static double B;
+	static double C = 90;
+	
+	public static void main(String args[])
+	{
+		//Uses scanner to get user inputs
+		Scanner scan = new Scanner(System.in);
+		System.out.println("This will calculate the ramianing side lengths and angles of a right triangle.");
+		System.out.println("Enter one side length.(for the longest side enter c, for the other two enter b or a)");
+		sString = scan.nextLine();
+		System.out.println("Now enter either anouther side length or an angle.(for angles (1-89) put a capital A at the begining, for sides enter either a, b, or c do not repeat your first side length)");
+		eString = scan.nextLine();
+		scan.close();
+		
+		setSide(sString); //sets first side length
+		
+		if(eString.substring(0,1).equals("A"))
+		{
+			//if given an angle finds and sets all other angles
+			eString = eString.substring(1);
+			either = Double.valueOf(eString);
+			findAngles(either);
+		}
+		else
+		{
+			//if given another side sets that side length
+			setSide(eString);
+		}
+		
+		if(A != 0)//if we have the angle A set
+		{
+			if(a != 0)//if we have side a
+			{
+				//needs to be in radians to use functions not degrees 
+				//sets sides c and b
+				c = a/Math.sin(toRadians(A));
+				b = a/Math.tan(toRadians(A));
+			}
+			else if(b != 0)//if we have side b
+			{
+				//needs to be in radians to use functions not degrees 
+				//sets sides a and b
+				a = b*Math.tan(toRadians(A));
+				c = b/Math.cos(toRadians(A));
+			}
+			else//we have side c
+			{
+				//needs to be in radians to use functions not degrees 
+				//sets sides a and b
+				a = c*Math.sin(toRadians(A));
+				b = c*Math.cos(toRadians(A));
+			}
+		}
+		//uses pythagorean theorem to find and set side lengths
+		else if(A == 0)//if we do not have angle A set
+		{
+			if(c == 0)//if we do not have side c
+			{
+				c = Math.sqrt(a*a+b*b);
+			}
+			else if(b == 0)//if we do not have side b
+			{
+				b = Math.sqrt(c*c-a*a);
+			}
+			else//we do not have side a
+			{
+				a = Math.sqrt(c*c-b*b);
+			}
+			//finds and sets angles
+			//puts angles into degrees instead of radians
+			A = toDegree(Math.asin(a/c));
+			//now that we have A and C we can call the find angles method again to find B
+			findAngles(A);
+			//B = toDegree(Math.asin(b/c));
+		}
+		
+		System.out.println("Side lengths: " + a + " " + b + " " + c);
+		System.out.println("Angles: " + A + " " + B + " " + C);
+		System.out.println("Perimeter: " + (a + b + c));
+		System.out.println("Area: " + (a * b / 2));
+	}
+	//sets the users side length as instance variables
+	public static void setSide(String str)
+	{
+		if(str.substring(0,1).equals("c"))
+		{
+			str = str.substring(1);
+			c = Double.valueOf(str);
+		}
+		else if(str.substring(0,1).equals("b"))
+		{
+			str = str.substring(1);
+			b = Double.valueOf(str);
+		}
+		else
+		{
+			str = str.substring(1);
+			a = Double.valueOf(str);
+		}
+	}
+	//calculates and sets all the angles if given 2
+	public static void findAngles(double angle)
+	{
+		if(angle > 45)
+		{
+			B = angle;
+			A = 90 - B;
+		}
+		else if(angle < 45)
+		{
+			A = angle;
+			B = 90 - A;
+		}
+		else
+		{
+			B = 45;
+			A = 45;
+		}
+	}
+	//changes from degrees to radians
+	public static double toRadians(double angle)
+	{
+		return angle * (Math.PI/180 );
+	}
+	//changes from radians to degrees
+	public static double toDegree(double angle)
+	{
+		return angle * (180/Math.PI );
+	}
+}
